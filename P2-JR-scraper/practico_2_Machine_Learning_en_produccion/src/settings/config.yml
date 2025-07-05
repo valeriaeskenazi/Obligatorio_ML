@@ -1,0 +1,9 @@
+# WebPage:
+#  BaseUrl: "https://www.gallito.com.uy/inmuebles/casas"
+#  ValidationUrl: "https://www.gallito.com.uy"
+#  AmountOfProperties: 5
+
+WebPage:
+  BaseUrl: "https://www.disco.com.uy/almacen"
+  ValidationUrl: "https://www.disco.com.uy"
+  AmountOfProperties: 5

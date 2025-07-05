@@ -1,0 +1,10 @@
+WebPage:
+  BaseUrl: "https://www.disco.com.uy/almacen"
+  ValidationUrl: "https://www.disco.com.uy"
+  MaxProducts: 1000
+
+Storage:
+  Type: "s3"  # Options: "local" or "s3"
+  S3:
+    Bucket: 1000-imagenes-scrapper-obligatorio-ml
+    Region: "us-east-1"
