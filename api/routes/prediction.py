@@ -14,7 +14,7 @@ detector = OctagonDetector()
 async def predict_single_image(file: UploadFile = File(...)):
     """
     Analyze a single food image to detect warning octagons.
-    Returns: True if octagon detected (unhealthy), False if no octagon (healthy)
+    Returns: True if octagon detected, False if no octagon
     """
     try:
         # Validate file
@@ -27,18 +27,16 @@ async def predict_single_image(file: UploadFile = File(...)):
         
         # Make prediction - only returns boolean and confidence
         has_octagon, confidence = detector.predict(image)
-        is_healthy = not has_octagon
         
         # Simple message based on octagon detection
         if has_octagon:
-            message = f"⚠️ Warning octagon detected - Unhealthy food (confidence: {confidence:.2%})"
+            message = f"⚠️ Octagon detected (confidence: {confidence:.2%})"
         else:
-            message = f"✅ No warning octagon found - Healthy food (confidence: {confidence:.2%})"
+            message = f"✅ No octagon found (confidence: {confidence:.2%})"
         
         return PredictionResponse(
             filename=file.filename,
             has_octagon=has_octagon,
-            is_healthy=is_healthy,
             confidence=confidence,
             message=message
         )
@@ -55,8 +53,8 @@ async def predict_batch_images(files: List[UploadFile] = File(...)):
         raise HTTPException(status_code=400, detail="Maximum 10 files allowed")
     
     results = []
-    healthy_count = 0
-    unhealthy_count = 0
+    octagon_count = 0
+    no_octagon_count = 0
     
     # Process images
     images = []
@@ -87,24 +85,21 @@ async def predict_batch_images(files: List[UploadFile] = File(...)):
         predictions = detector.predict_batch(images)
         
         for filename, (has_octagon, confidence) in zip(filenames, predictions):
-            is_healthy = not has_octagon
-            
             # Count results
-            if is_healthy:
-                healthy_count += 1
+            if has_octagon:
+                octagon_count += 1
             else:
-                unhealthy_count += 1
+                no_octagon_count += 1
             
             # Simple message based on octagon detection
             if has_octagon:
-                message = f"⚠️ Warning octagon detected - Unhealthy (confidence: {confidence:.2%})"
+                message = f"⚠️ Octagon detected (confidence: {confidence:.2%})"
             else:
-                message = f"✅ No warning octagon - Healthy (confidence: {confidence:.2%})"
+                message = f"✅ No octagon found (confidence: {confidence:.2%})"
             
             results.append(PredictionResponse(
                 filename=filename,
                 has_octagon=has_octagon,
-                is_healthy=is_healthy,
                 confidence=confidence,
                 message=message
             ))
@@ -115,6 +110,6 @@ async def predict_batch_images(files: List[UploadFile] = File(...)):
     return BatchPredictionResponse(
         results=results,
         total_processed=len(files),
-        healthy_count=healthy_count,
-        unhealthy_count=unhealthy_count
+        octagon_count=octagon_count,
+        no_octagon_count=no_octagon_count
     )
