@@ -1,0 +1,50 @@
+services:
+  # FastAPI Service
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: food-octagon-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount model directory for persistence
+      - ./model:/app/model
+      # Mount documentation directory
+      - ./documentation:/app/documentation
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - octagon-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+
+  # Gradio Service
+  gradio:
+    build:
+      context: .
+      dockerfile: Dockerfile.gradio
+    container_name: food-octagon-gradio
+    ports:
+      - "7860:7860"
+    depends_on:
+      - fastapi
+    environment:
+      - PYTHONPATH=/app
+      - API_BASE_URL=http://fastapi:8000
+    networks:
+      - octagon-network
+    restart: unless-stopped
+
+networks:
+  octagon-network:
+    driver: bridge
+
+volumes:
+  model-data: 

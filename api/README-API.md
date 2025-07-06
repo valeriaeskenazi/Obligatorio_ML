@@ -1,55 +1,208 @@
 # Food Octagon Detection API
 
-This FastAPI application detects warning octagons in food packaging images to determine if food products are healthy or unhealthy.
+Esta aplicación FastAPI detecta octógonos de advertencia en imágenes de empaquetado de alimentos para determinar si los productos alimenticios son saludables o no saludables en base a si tienen o no tienen octógonos.
 
-## Model Information
+## Información del modelo
 
-- **Model**: LeNet_1 Convolutional Neural Network
+- **Modelo**: LeNet_1 Convolutional Neural Network
 - **Input**: 500x500 RGB images
-- **Classes**: 
+- **Clases**: 
   - `0` = sin_octogono (healthy - no warning octagon)
   - `1` = con_octogono (unhealthy - warning octagon detected)
 - **Framework**: PyTorch
 
-## Setup and Installation
+## Setup
 
-### Prerequisites
+### Prerequisitos
 - Python 3.8+
 - PyTorch
 - FastAPI
 
-### Installation
+### Instalación
 
-1. **Navigate to the API directory:**
+1. **Navegar al directorio de la API:**
    ```bash
    cd api
    ```
 
-2. **Install dependencies:**
+2. **Crear un entorno virtual:**
+   ```bash
+   python -m venv venv
+   ```
+
+3. **Activar el entorno virtual:**
+   ```bash
+   # En Windows:
+   venv\Scripts\activate
+   
+   # En macOS/Linux:
+   source venv/bin/activate
+   ```
+
+4. **Instalar dependencias:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Ensure model file is in place:**
+5. **Asegurar que el archivo del modelo esté en su lugar:**
    ```bash
-   # Check if model exists
+   # Verificar si el modelo existe
    ls -la model/letnet_model_1.pth
-   
-   # If not found, copy from parent directory
-   cp ../model/letnet_model_1.pth model/
    ```
 
-## Running the API
+## Ejecutando la API
 
-### Start the server:
+### Opción 1: Ejecución Local
+
+#### Iniciar servidor FastAPI:
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Server will be available at:
+#### Iniciar interfaz Gradio:
+```bash
+python gradio_app.py
+```
+
+### Opción 2: Ejecución con Docker (Recomendado)
+
+#### Requisitos Previos:
+- Docker instalado en tu sistema
+- Docker Compose disponible
+
+#### 🚀 Iniciar la Aplicación Completa:
+
+**Opción A: Ejecución en segundo plano (recomendado)**
+```bash
+# Construir imágenes y ejecutar servicios en modo detached
+docker-compose up --build -d
+
+# Verificar que los servicios estén funcionando
+docker-compose ps
+```
+
+**Opción B: Ejecución con logs en tiempo real**
+```bash
+# Ejecutar y ver logs simultáneamente
+docker-compose up --build
+```
+
+#### 📊 Monitoreo y Gestión:
+
+**Ver logs de los servicios:**
+```bash
+# Ver logs de ambos servicios
+docker-compose logs -f
+
+# Ver logs solo del servicio FastAPI
+docker-compose logs -f fastapi
+
+# Ver logs solo del servicio Gradio
+docker-compose logs -f gradio
+```
+
+**Verificar estado de los contenedores:**
+```bash
+# Ver estado actual de todos los servicios
+docker-compose ps
+
+# Ver información detallada de los contenedores
+docker-compose ps -a
+```
+
+#### ⚙️ Comandos de Gestión Avanzados:
+
+**Reiniciar servicios:**
+```bash
+# Reiniciar todos los servicios
+docker-compose restart
+
+# Reiniciar solo FastAPI
+docker-compose restart fastapi
+
+# Reiniciar solo Gradio
+docker-compose restart gradio
+```
+
+**Reconstruir imágenes:**
+```bash
+# Reconstruir todas las imágenes sin cache
+docker-compose build --no-cache
+
+# Reconstruir solo FastAPI
+docker-compose build --no-cache fastapi
+
+# Reconstruir solo Gradio
+docker-compose build --no-cache gradio
+```
+
+**Ejecutar servicios individuales:**
+```bash
+# Ejecutar solo el servicio FastAPI
+docker-compose up fastapi
+
+# Ejecutar solo el servicio Gradio
+docker-compose up gradio
+```
+
+#### 🛑 Detener y Limpiar:
+
+**Detener servicios:**
+```bash
+# Detener todos los servicios
+docker-compose down
+
+# Detener y eliminar volúmenes
+docker-compose down -v
+
+# Detener y eliminar imágenes
+docker-compose down --rmi all
+```
+
+**Limpieza completa:**
+```bash
+# Eliminar contenedores, redes, volúmenes e imágenes
+docker-compose down --rmi all -v --remove-orphans
+
+# Limpiar recursos Docker no utilizados
+docker system prune -f
+```
+
+#### 🔧 Solución de Problemas:
+
+**Si los servicios no inician correctamente:**
+```bash
+# Verificar logs de errores
+docker-compose logs
+
+# Reconstruir desde cero
+docker-compose down --rmi all -v
+docker-compose up --build -d
+```
+
+**Si hay problemas de puertos:**
+```bash
+# Verificar qué puertos están en uso
+lsof -i :8000
+lsof -i :7860
+
+# Cambiar puertos en docker-compose.yml si es necesario
+```
+
+**Verificar conectividad entre servicios:**
+```bash
+# Probar que FastAPI responde
+curl http://localhost:8000/health
+
+# Probar que Gradio responde
+curl http://localhost:7860
+```
+
+### Disponible en:
 - **API Base URL**: http://localhost:8000
 - **Interactive Documentation**: http://localhost:8000/docs
 - **Alternative Documentation**: http://localhost:8000/redoc
+- **Gradio UI**: http://localhost:7860
 
 ## API Endpoints
 
@@ -57,7 +210,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```http
 GET /health
 ```
-Check if the API and model are working properly.
+Verificar si la API y el modelo están funcionando correctamente.
 
 **Response:**
 ```json
@@ -85,11 +238,11 @@ Get detailed information about the loaded model.
 }
 ```
 
-### 3. Single Image Prediction
+### 3. Predicción de Imagen Única
 ```http
 POST /predict/single
 ```
-Upload a single food image for octagon detection.
+Sube una imagen de comida individual para la detección de octágonos.
 
 **Parameters:**
 - `file`: Image file (jpg, png, etc.)
@@ -105,11 +258,11 @@ Upload a single food image for octagon detection.
 }
 ```
 
-### 4. Batch Image Prediction
+### 4. Predicción de Imágenes en Lotes
 ```http
 POST /predict/batch
 ```
-Upload multiple food images for batch octagon detection (max 10 files).
+Sube múltiples imágenes de comida para la detección de octágonos en lotes (máximo 10 archivos).
 
 **Parameters:**
 - `files`: List of image files
@@ -139,9 +292,9 @@ Upload multiple food images for batch octagon detection (max 10 files).
 }
 ```
 
-## Usage Examples
+## Ejemplos de Uso
 
-### Using curl:
+### Usando curl:
 
 **Single image prediction:**
 ```bash
@@ -156,7 +309,7 @@ curl -X POST "http://localhost:8000/predict/single" \
 curl -X GET "http://localhost:8000/health"
 ```
 
-### Using Python requests:
+### Usando Python requests:
 
 ```python
 import requests
@@ -171,66 +324,173 @@ with open('food_image.jpg', 'rb') as f:
     print(f"Confidence: {result['confidence']:.2%}")
 ```
 
-### Using the Interactive Documentation:
+### Usando la Documentación Interactiva:
 
-1. Go to http://localhost:8000/docs
-2. Click on any endpoint to expand it
-3. Click "Try it out"
-4. Upload your image(s)
-5. Click "Execute" to see the results
+1. Ir a http://localhost:8000/docs
+2. Haz clic en cualquier endpoint para expandirlo
+3. Haz clic en "Try it out"
+4. Sube tu(s) imagen(es)
+5. Haz clic en "Execute" para ver los resultados
 
-## Model Details
+## Detalles del Modelo
 
-The API uses a LeNet_1 CNN trained to classify food packaging images:
+La API utiliza una CNN LeNet_1 entrenada para clasificar imágenes de empaquetado de alimentos:
 
-- **Input preprocessing**: Resize to 500x500, convert to tensor
-- **Output**: Binary classification (octagon/no octagon)
-- **Confidence**: Softmax probability of the predicted class
+- **Preprocesamiento de input**: Redimensionar a 500x500, convertir a tensor
+- **Output**: Clasificación binaria (octágono/sin octágono)
+- **Confianza**: Probabilidad softmax de la clase predicha
 
 ## Troubleshooting
 
-### Common Issues:
+### Problemas Comunes:
 
-1. **Model not loading:**
-   - Ensure `letnet_model_1.pth` is in the `model/` directory
-   - Check file permissions
+1. **Modelo no se carga:**
+   - Asegúrate de que `letnet_model_1.pth` esté en el directorio `model/`
+   - Verifica los permisos del archivo
 
-2. **Import errors:**
-   - Make sure all dependencies are installed: `pip install -r requirements.txt`
+2. **Errores de importación:**
+   - Asegúrate de que todas las dependencias estén instaladas: `pip install -r requirements.txt`
 
-3. **Image upload errors:**
-   - Supported formats: JPG, PNG, JPEG
-   - Maximum file size: Check your system limits
+3. **Errores al subir imágenes:**
+   - Formatos soportados: JPG, PNG, JPEG
+   - Tamaño máximo de archivo: Verifica los límites de tu sistema
 
-4. **Port already in use:**
+4. **Puerto ya en uso:**
    ```bash
-   # Use a different port
+   # Usa un puerto diferente
    uvicorn main:app --reload --host 0.0.0.0 --port 8001
    ```
 
-## Development
+## Desarrollo
 
-### Project Structure:
+### Estructura del Proyecto
 ```
 api/
-├── main.py              # FastAPI app entry point
+├── main.py              # Punto de entrada de la app FastAPI
 ├── model/
 │   ├── __init__.py
-│   ├── predictor.py     # Model inference logic
-│   └── letnet_model_1.pth # Trained model
+│   ├── predictor.py     # Lógica de inferencia del modelo
+│   └── letnet_model_1.pth # Modelo entrenado
 ├── routes/
 │   ├── __init__.py
-│   └── prediction.py    # API endpoints
-├── schemas.py           # Pydantic models
-├── requirements.txt     # Dependencies
-└── README-API.md       # This file
+│   └── prediction.py    # Endpoints de la API
+├── schemas.py           # Modelos Pydantic
+├── requirements.txt     # Dependencias
+├── gradio_app.py        # Interfaz gráfica Gradio
+├── README-API.md        # Este archivo
+├── documentation/       # Documentación de la API
+│   ├── fastapi_openapi_spec.json  # Especificación OpenAPI en JSON
+│   ├── fastapi_docs.html          # Documentación Swagger UI
+│   └── fastapi_redoc.html         # Documentación ReDoc
+├── Dockerfile           # Dockerfile para FastAPI
+├── Dockerfile.gradio    # Dockerfile para Gradio
+├── docker-compose.yml   # Orquestación de servicios
+└── .dockerignore        # Archivos a ignorar en Docker
 ```
 
-### Adding new endpoints:
-1. Define new routes in `routes/prediction.py`
-2. Add corresponding schemas in `schemas.py`
-3. Update this README with documentation
+## Interfaz Gráfica con Gradio
+
+La aplicación incluye una interfaz gráfica desarrollada con **Gradio** para facilitar la interacción con la API de detección de octógonos.
+
+### ¿Qué permite la app Gradio?
+- Subir una imagen para predicción individual.
+- Subir varias imágenes para predicción en lote.
+- Visualizar los resultados de cada imagen (octógono/no octógono, confianza, estado saludable).
+- Consultar el estado de la API y la información del modelo.
+
+### ¿Cómo usar la app Gradio?
+1. Asegúrate de que la API esté corriendo en http://localhost:8000
+2. Ejecuta la app Gradio:
+   ```bash
+   python gradio_app.py
+   ```
+3. Abre tu navegador en: http://localhost:7860
+4. Usa las pestañas para predicción individual o por lote.
+
+### Ejemplo de uso
+- Sube una o varias imágenes de empaques de alimentos.
+- Haz clic en "Analizar Imagen(es)".
+- Observa los resultados en la tabla y el resumen.
+
+### Características
+- Interfaz amigable y moderna.
+- Resultados claros y visuales.
+- Soporte para imágenes JPG y PNG.
+- Resúmenes de salud y confianza del modelo.
+
+## Documentación de la API
+
+La API incluye documentación completa descargable en múltiples formatos para facilitar el desarrollo y la integración.
+
+### Archivos de Documentación Disponibles
+
+#### 📄 `documentation/fastapi_openapi_spec.json`
+- **Formato**: Especificación OpenAPI 3.0 en JSON
+- **Uso**: Importar en herramientas como Postman, Insomnia, o generadores de código
+- **Contenido**: Definiciones completas de endpoints, esquemas, ejemplos y respuestas
+- **Tamaño**: ~4.6 KB
+
+#### 🌐 `documentation/fastapi_docs.html`
+- **Formato**: Documentación Swagger UI interactiva
+- **Uso**: Abrir en cualquier navegador web para explorar la API
+- **Características**: Interfaz interactiva para probar endpoints directamente
+- **Tamaño**: ~958 bytes
+
+#### 📖 `documentation/fastapi_redoc.html`
+- **Formato**: Documentación ReDoc alternativa
+- **Uso**: Vista alternativa más legible de la documentación
+- **Características**: Diseño limpio y fácil de navegar
+- **Tamaño**: ~910 bytes
+
+### Cómo Usar la Documentación
+
+#### Para Desarrolladores:
+```bash
+# Importar especificación OpenAPI en Postman
+# 1. Abrir Postman
+# 2. File > Import
+# 3. Seleccionar documentation/fastapi_openapi_spec.json
+# 4. ¡Listo! Todos los endpoints estarán disponibles
+```
+
+#### Para Ver la Documentación Web:
+```bash
+# Abrir documentación Swagger UI
+open documentation/fastapi_docs.html
+
+# O abrir documentación ReDoc
+open documentation/fastapi_redoc.html
+```
+
+#### Para Generar Código Cliente:
+```bash
+# Usar la especificación OpenAPI con herramientas como:
+# - openapi-generator-cli
+# - swagger-codegen
+# - nswag (para .NET)
+```
+
+### Actualizar la Documentación
+
+Para regenerar la documentación después de cambios en la API:
+
+```bash
+# 1. Asegúrate de que la API esté corriendo
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# 2. Descarga la nueva documentación
+curl -s http://localhost:8000/openapi.json > documentation/fastapi_openapi_spec.json
+curl -s http://localhost:8000/docs > documentation/fastapi_docs.html
+curl -s http://localhost:8000/redoc > documentation/fastapi_redoc.html
+```
 
 ---
 
-**Note**: This API is designed for food packaging analysis to detect health warning octagons as per food safety regulations.
+**Nota**: Esta API y la interfaz Gradio están diseñadas para análisis de empaques de alimentos y detección de octógonos de advertencia nutricional según la normativa vigente en Uruguay y otros países.
+
+---
+
+### Agregar nuevos endpoints
+1. Define nuevas rutas en `routes/prediction.py`
+2. Agrega los esquemas correspondientes en `schemas.py`
+3. Actualiza este README con la documentación

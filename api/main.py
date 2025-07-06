@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import prediction
-from .model.predictor import OctagonDetector
-from .schemas import HealthCheckResponse
+from routes import prediction
+from model.predictor import OctagonDetector
+from schemas import HealthCheckResponse
 
 # Initialize FastAPI app
 app = FastAPI(

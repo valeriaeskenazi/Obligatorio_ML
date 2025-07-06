@@ -2,8 +2,8 @@ from fastapi import APIRouter, File, UploadFile, HTTPException
 from typing import List
 import io
 from PIL import Image
-from ..model.predictor import OctagonDetector
-from ..schemas import PredictionResponse, BatchPredictionResponse, ErrorResponse
+from model.predictor import OctagonDetector
+from schemas import PredictionResponse, BatchPredictionResponse, ErrorResponse
 
 router = APIRouter(prefix="/predict", tags=["prediction"])
 

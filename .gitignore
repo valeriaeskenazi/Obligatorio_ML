@@ -5,11 +5,7 @@
 *.h5
 *.onnx
 
-# Model directories
-model/
-models/
-api/model/*.pth
-api/model/*.pt
+# Note: model/ directories are kept, only the large model files are excluded
 
 # Python cache
 __pycache__/
