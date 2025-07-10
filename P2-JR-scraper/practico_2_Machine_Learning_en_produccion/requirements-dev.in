@@ -1,5 +1,0 @@
--r requirements.in
-black
-isort
-flake8
-ipython
