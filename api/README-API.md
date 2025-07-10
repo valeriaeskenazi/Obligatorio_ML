@@ -4,7 +4,7 @@ Esta aplicación FastAPI detecta octógonos de advertencia en imágenes de empaq
 
 ## Información del modelo
 
-- **Modelo**: LeNet_1 Convolutional Neural Network
+- **Modelo**: ResNet_1 Convolutional Neural Network
 - **Input**: 500x500 RGB images
 - **Clases**: 
   - `0` = sin_octogono (healthy - no warning octagon)
@@ -47,7 +47,7 @@ Esta aplicación FastAPI detecta octógonos de advertencia en imágenes de empaq
 5. **Asegurar que el archivo del modelo esté en su lugar:**
    ```bash
    # Verificar si el modelo existe
-   ls -la model/letnet_model_1.pth
+   ls -la model/resnet_model_1.pth
    ```
 
 ## Ejecutando la API
@@ -217,7 +217,7 @@ Verificar si la API y el modelo están funcionando correctamente.
 {
   "status": "healthy",
   "model_loaded": true,
-  "message": "LeNet_1 model loaded successfully on cpu"
+  "message": "ResNet_1 model loaded successfully on cpu"
 }
 ```
 
@@ -230,7 +230,7 @@ Get detailed information about the loaded model.
 **Response:**
 ```json
 {
-  "model_type": "LeNet_1",
+  "model_type": "ResNet_1",
   "input_size": [500, 500],
   "classes": ["sin_octogono", "con_octogono"],
   "device": "cpu",
@@ -334,7 +334,7 @@ with open('food_image.jpg', 'rb') as f:
 
 ## Detalles del Modelo
 
-La API utiliza una CNN LeNet_1 entrenada para clasificar imágenes de empaquetado de alimentos:
+La API utiliza una CNN ResNet_1 entrenada para clasificar imágenes de empaquetado de alimentos:
 
 - **Preprocesamiento de input**: Redimensionar a 500x500, convertir a tensor
 - **Output**: Clasificación binaria (octágono/sin octágono)
@@ -345,7 +345,7 @@ La API utiliza una CNN LeNet_1 entrenada para clasificar imágenes de empaquetad
 ### Problemas Comunes:
 
 1. **Modelo no se carga:**
-   - Asegúrate de que `letnet_model_1.pth` esté en el directorio `model/`
+   - Asegúrate de que `resnet_model_1.pth` esté en el directorio `model/`
    - Verifica los permisos del archivo
 
 2. **Errores de importación:**
@@ -370,7 +370,7 @@ api/
 ├── model/
 │   ├── __init__.py
 │   ├── predictor.py     # Lógica de inferencia del modelo
-│   └── letnet_model_1.pth # Modelo entrenado
+│   └── resnet_model_1.pth # Modelo entrenado
 ├── routes/
 │   ├── __init__.py
 │   └── prediction.py    # Endpoints de la API
