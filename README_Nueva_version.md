@@ -1,7 +1,7 @@
 # Paso a paso el proceso de scrappeado y taggeado
 
 ## Estructura para el armado del Dataset
-
+```bash
 src/
 ├── connectors/
 │   ├── openai_client.py         # Conexión con la API de OpenAI
@@ -30,7 +30,7 @@ src/
 │
 ├── main.py                      # Script principal (no utilizado en la ejecución estándar)
 └── pipeline.py                  # Script principal de ejecución: scraping, tagging y subida a S3
-
+```
 
 
 
