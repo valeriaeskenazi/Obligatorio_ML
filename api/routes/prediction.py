@@ -7,28 +7,28 @@ from schemas import PredictionResponse, BatchPredictionResponse, ErrorResponse
 
 router = APIRouter(prefix="/predict", tags=["prediction"])
 
-# Initialize model detector
+# Inicializar detector del modelo
 detector = OctagonDetector()
 
 @router.post("/single", response_model=PredictionResponse)
 async def predict_single_image(file: UploadFile = File(...)):
     """
-    Analyze a single food image to detect warning octagons.
-    Returns: True if octagon detected, False if no octagon
+    Analiza una imagen individual de alimento para detectar octógonos de advertencia.
+    Retorna: True si se detecta octógono, False si no hay octógono
     """
     try:
-        # Validate file
+        # Validar archivo
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="File must be an image")
         
-        # Load image
+        # Cargar imagen
         image_data = await file.read()
         image = Image.open(io.BytesIO(image_data))
         
-        # Make prediction - only returns boolean and confidence
+        # Realizar predicción - solo retorna booleano y confianza
         has_octagon, confidence = detector.predict(image)
         
-        # Simple message based on octagon detection
+        # Mensaje simple basado en la detección de octógono
         if has_octagon:
             message = f"⚠️ Octagon detected (confidence: {confidence:.2%})"
         else:
@@ -47,7 +47,7 @@ async def predict_single_image(file: UploadFile = File(...)):
 @router.post("/batch", response_model=BatchPredictionResponse)
 async def predict_batch_images(files: List[UploadFile] = File(...)):
     """
-    Analyze multiple food images to detect warning octagons in batch (max 10 files).
+    Analiza múltiples imágenes de alimentos para detectar octógonos de advertencia en lote (máximo 10 archivos).
     """
     if len(files) > 10:
         raise HTTPException(status_code=400, detail="Maximum 10 files allowed")
@@ -56,7 +56,7 @@ async def predict_batch_images(files: List[UploadFile] = File(...)):
     octagon_count = 0
     no_octagon_count = 0
     
-    # Process images
+    # Procesar imágenes
     images = []
     filenames = []
     
@@ -80,18 +80,18 @@ async def predict_batch_images(files: List[UploadFile] = File(...)):
                 error=str(e)
             ))
     
-    # Batch prediction
+    # Predicción por lote
     try:
         predictions = detector.predict_batch(images)
         
         for filename, (has_octagon, confidence) in zip(filenames, predictions):
-            # Count results
+            # Contar resultados
             if has_octagon:
                 octagon_count += 1
             else:
                 no_octagon_count += 1
             
-            # Simple message based on octagon detection
+            # Mensaje simple basado en la detección de octógono
             if has_octagon:
                 message = f"⚠️ Octagon detected (confidence: {confidence:.2%})"
             else:
