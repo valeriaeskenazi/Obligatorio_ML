@@ -218,3 +218,4 @@ class OctagonDetector:
             "device": str(self.device),
             "loaded": self.is_loaded()
         }
+    
