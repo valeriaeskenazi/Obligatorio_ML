@@ -114,7 +114,7 @@ Ahora si, el problema estaba en el README, se cambia nombre y se proceede de man
 ## Modelo 1
 Enlace al modelo 2: https://drive.google.com/file/d/1KAo8Ox3J8JzSeOw0KgFyrhJTBtMocGY7/view?usp=sharing
 
-Enlace al modelo 2:
+Enlace al modelo 2: https://drive.google.com/file/d/13m-CeDUYAfDH0dMW73GdpAol9G_0CmEX/view?usp=drive_link
 
 (este modelo por su peso, se encuentra en github, dentro de la carpeta de API/model)
 
